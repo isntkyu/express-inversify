@@ -3,8 +3,8 @@ import * as Express from 'express';
 import { Container } from 'inversify';
 import { InversifyExpressServer, TYPE, interfaces } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
-import { Model } from './model/model';
-import { ExampleController } from './controller/controller';
+import { FooService } from './service/FooService';
+import "./controller/controller";
 
 export class Server {
   private app: Express.Application;
@@ -13,8 +13,7 @@ export class Server {
   private container: Container;
   constructor() {
     this.container = new Container();
-    this.container.bind(TYPE.Controller).to(ExampleController);
-    this.container.bind(Model.name).to(Model);
+    this.container.bind<FooService>('FooService').to(FooService);
     this.server = new InversifyExpressServer(this.container);
     this.server.setConfig((app) => {
       app.use(bodyParser.urlencoded({extended: true}));
@@ -26,6 +25,7 @@ export class Server {
     })
 
   }
+  
   public static bootstrap(): Server { return new Server(); }
 }
 
